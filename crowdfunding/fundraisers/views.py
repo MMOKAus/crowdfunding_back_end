@@ -56,7 +56,7 @@ class PledgeList(APIView):
     def post(self, request):
         serializer = PledgeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(owner=request.user)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
@@ -65,13 +65,31 @@ class PledgeList(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-    
+class PledgeDetail(APIView):
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+    ]
+
+    def get_object(self, pk):
+        try:
+            pledge = Pledge.objects.get(pk=pk)
+            self.check_object_permissions(self.request, pledge)
+            return pledge
+        except Pledge.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        pledge = self.get_object(pk)
+        serializer = PledgeSerializer(pledge)
+        return Response(serializer.data)
+
     def put(self, request, pk):
-        fundraiser = self.get_object(pk)
-        serializer = FundraiserDetailSerializer(
-            instance=fundraiser,
+        pledge = self.get_object(pk)
+        serializer = PledgeSerializer(
+            instance=pledge,
             data=request.data,
-            partial=True
+            partial=True   # allows updating just one field
         )
         if serializer.is_valid():
             serializer.save()
@@ -81,3 +99,8 @@ class PledgeList(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+    def delete(self, request, pk):
+        pledge = self.get_object(pk)
+        pledge.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
