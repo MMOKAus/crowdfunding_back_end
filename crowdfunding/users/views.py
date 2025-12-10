@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import permissions
 
 from django.http import Http404
 from rest_framework.views import APIView
@@ -10,23 +11,22 @@ from .models import CustomUser
 from .serializers import CustomUserSerializer
  
 class CustomUserList(APIView):
+    
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        # registration open to anyone
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-            )
-        return Response(
-            serializer.errors, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CustomUserDetail(APIView):
     def get_object(self, pk):
@@ -34,12 +34,17 @@ class CustomUserDetail(APIView):
             return CustomUser.objects.get(pk=pk)
         except CustomUser.DoesNotExist:
             raise Http404
+        
+    
 
     def get(self, request, pk):
+        if request.user.id != pk:
+            return Response(status=status.HTTP_403_FORBIDDEN) #prevents users to see other users profiles
+    
         user = self.get_object(pk)
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)# Create your views here.
-    
+        
 
 class CustomAuthToken(ObtainAuthToken):
    def post(self, request, *args, **kwargs):

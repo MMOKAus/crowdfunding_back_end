@@ -2,15 +2,19 @@ from rest_framework import serializers
 from django.apps import apps
 
 class PledgeSerializer(serializers.ModelSerializer):
+    supporter = serializers.ReadOnlyField(source='supporter.id')
+
     class Meta:
         model = apps.get_model('fundraisers.Pledge')
         fields = '__all__'
+        read_only_fields = ['supporter']
 
 class FundraiserSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
     class Meta:
         model = apps.get_model('fundraisers.Fundraiser')
         fields = '__all__'
+        read_only_fields = ['owner', 'date_created']
 
 class FundraiserDetailSerializer(FundraiserSerializer):
     pledges = PledgeSerializer(many=True, read_only=True)
@@ -20,7 +24,6 @@ class FundraiserDetailSerializer(FundraiserSerializer):
         instance.goal = validated_data.get('goal', instance.goal)
         instance.image = validated_data.get('image', instance.image)
         instance.is_open = validated_data.get('is_open', instance.is_open)
-        instance.date_created = validated_data.get('date_created', instance.date_created)
-        instance.owner = validated_data.get('owner', instance.owner)
+        #instance.owner = validated_data.pop('owner', None)
         instance.save()
         return instance
