@@ -75,11 +75,95 @@ Shows list of fundraisers created by the user
 
 Shows pledges made by the user
 
-#### Login / Signup Page
+## Login / Signup Page
 
-Simple forms to register and authenticate
+Endpoint:
+POST /users/
 
-Token-based authentication
+Full URL:
+shecodes-production-app-a88e0902e533.herokuapp.com/api-token-auth/
+
+Request body (JSON):
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "testpassword123"
+}
+
+
+#### Steps (Insomnia)
+Create POST request to shecodes-production-app-a88e0902e533.herokuapp.com/api-token-auth/
+
+Set Body → JSON and paste the JSON above.
+
+Add header: Content-Type: application/json.
+
+Send the request.
+
+On success: 201 Created and a JSON representation of the user (without the password).
+
+## Obtaining token
+
+Endpoint:
+POST /api-token-auth/
+
+Request body (JSON):
+
+{
+  "username": "testuser",
+  "password": "testpassword123"
+}
+
+#### Steps
+Create POST request to shecodes-production-app-a88e0902e533.herokuapp.com/api-token-auth/.
+
+Body → JSON with username + password.
+
+Header: Content-Type: application/json.
+
+Send the request.
+
+Copy the token value from the response from the Authorization header.
+
+
+
+## Creating a new fundraiser
+
+Endpoint:
+POST /fundraisers/
+
+Request body (JSON):
+
+{
+  "title": "Emergency Boarding for Luna",
+  "description": "Luna needs safe temporary boarding while her owner finds housing.",
+  "goal": 500,
+  "image": "https://example.com/luna.jpg",
+  "is_open": true
+}
+Headers:
+
+Content-Type: application/json
+
+Authorization: Token YOUR_TOKEN_HERE
+
+#### Steps (Insomnia)
+
+Create POST request to shecodes-production-app-a88e0902e533.herokuapp.com/fundraisers/
+
+Set Body → JSON and paste the fundraiser JSON.
+
+Add Content-Type: application/json.
+
+Add Authorization header with the token: Token abcdef123456...
+
+Send the request.
+
+On success: 201 Created and a JSON object representing the new fundraiser, with owner automatically set to the logged-in user.
+
+
+
 
 ## API Specification
 
