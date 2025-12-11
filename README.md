@@ -75,6 +75,8 @@ Shows list of fundraisers created by the user
 
 Shows pledges made by the user
 
+![GET](./GET_insomnia.png)
+
 ## Login / Signup Page
 
 Endpoint:
@@ -103,6 +105,8 @@ Send the request.
 
 On success: 201 Created and a JSON representation of the user (without the password).
 
+![POST](./POST_insomnia.png)
+
 ## Obtaining token
 
 Endpoint:
@@ -125,6 +129,8 @@ Header: Content-Type: application/json.
 Send the request.
 
 Copy the token value from the response from the Authorization header.
+
+![API Token](./API-token_insomnia.png)
 
 
 
@@ -223,3 +229,4 @@ On success: 201 Created and a JSON object representing the new fundraiser, with 
 
 
 ![Schema Diagram](./schema-diagram.png)
+
