@@ -136,4 +136,4 @@ Token-based authentication
 | supporter  | ForeignKey(User)       | Many-to-one                  |
 
 
-![](./schema-diagram.png)
+![Schema Diagram](./schema-diagram.png)
