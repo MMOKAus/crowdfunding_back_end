@@ -1,4 +1,6 @@
 ## PawFund — Crowdfunding Back End
+![PawFund Banner](./paws-banner.JPG)
+
 
 ### Olga Kozlovskaia
 
