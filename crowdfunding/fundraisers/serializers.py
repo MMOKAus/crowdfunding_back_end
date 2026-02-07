@@ -2,12 +2,14 @@ from rest_framework import serializers
 from django.apps import apps
 
 class PledgeSerializer(serializers.ModelSerializer):
-    supporter = serializers.ReadOnlyField(source='supporter.id')
+    supporter = serializers.ReadOnlyField(source="supporter.id")
+    supporter_username = serializers.ReadOnlyField(source="supporter.username")
 
     class Meta:
-        model = apps.get_model('fundraisers.Pledge')
-        fields = '__all__'
-        read_only_fields = ['supporter']
+        model = apps.get_model("fundraisers.Pledge")
+        fields = "__all__"
+        read_only_fields = ["supporter"]
+
 
 class FundraiserSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
