@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.apps import apps
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 
 class PledgeSerializer(serializers.ModelSerializer):
     supporter = serializers.ReadOnlyField(source="supporter.id")
@@ -13,6 +15,7 @@ class PledgeSerializer(serializers.ModelSerializer):
 
 class FundraiserSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
+    total_pledged = serializers.SerializerMethodField()
     class Meta:
         model = apps.get_model('fundraisers.Fundraiser')
         fields = '__all__'
@@ -29,3 +32,7 @@ class FundraiserDetailSerializer(FundraiserSerializer):
         #instance.owner = validated_data.pop('owner', None)
         instance.save()
         return instance
+    
+def get_total_pledged(self, obj):
+        # Uses the related name "pledges" from FundraiserDetailSerializer
+        return obj.pledges.aggregate(total=Coalesce(Sum("amount"), 0))["total"]
