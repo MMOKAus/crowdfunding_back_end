@@ -34,5 +34,11 @@ class FundraiserDetailSerializer(FundraiserSerializer):
         return instance
     
 def get_total_pledged(self, obj):
+        pledges_manager = getattr(obj, "pledges", None)  # if related_name="pledges"
+        if pledges_manager is None:
+            pledges_manager = obj.pledge_set             # default reverse name
+
         # Uses the related name "pledges" from FundraiserDetailSerializer
-        return obj.pledges.aggregate(total=Coalesce(Sum("amount"), 0))["total"]
+        return pledges_manager.aggregate(
+            total=Coalesce(Sum("amount"), 0)
+        )["total"]
